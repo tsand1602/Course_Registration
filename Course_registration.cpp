@@ -29,7 +29,7 @@ public:
             completed_courses.insert(courses[i]);
     }
     bool findcourse(const string& course_code) {
-        return enrolled_courses.find(course_code) != enrolled_courses.end();
+        return (completed_courses.find(course_code) != completed_courses.end()) || (enrolled_courses.find(course_code) != enrolled_courses.end());
     }
     friend class course;
 };
