@@ -1,6 +1,6 @@
 # Course Registration System
 
-A simple C++ console application to manage a university course registration process, including student enrollment, course management, prerequisite checking, time slot clash detection, waitlisting, and credit limits.
+A simple C++ console application to manage a university course registration process, including student enrollment, course management, prerequisite checking, time slot clash detection, waitlisting, and more.
 
 ## Features
 
@@ -24,61 +24,88 @@ A simple C++ console application to manage a university course registration proc
 
 ## Usage
 
-### Commands
+### Command List with Prompts
 
-- `add_student`  
-  Add a new student.  
-  Input format:  
-  ```
-  <student_id> <name> <year> <cgpa> <number_of_completed_courses>
-  <completed_course_1> <completed_course_2> ... <completed_course_n>
-  ```
+- `addStudent`  
+  Add a new student. The program will prompt for:
+  - Student ID
+  - Student Name
+  - Year of Study
+  - CGPA
+  - Number of completed courses, then asks for each course code
 
-- `add_course`  
-  Add a new course.  
-  Input format:  
-  ```
-  <course_code> <course_name> <credits> <capacity> <time_slot> <number_of_prerequisites>
-  <prereq_1> <prereq_2> ... <prereq_n>
-  ```
+- `addCourse`  
+  Add a new course. The program will prompt for:
+  - Course ID
+  - Course Name
+  - Number of Credits
+  - Course Capacity
+  - Time Slot (A/B/C/etc.)
+  - Number of prerequisite courses, then asks for each prerequisite course code
 
 - `enroll`  
-  Enroll a student in a course.  
-  Input format:  
-  ```
-  <student_id> <course_code>
-  ```
+  Enroll a student in a course. The program will prompt for:
+  - Student ID for Enrollment
+  - Course ID to Enroll In
 
 - `drop`  
-  Drop a student from a course.  
-  Input format:  
-  ```
-  <student_id> <course_code>
-  ```
+  Drop a student from a course. The program will prompt for:
+  - Student ID for Dropping Course
+  - Course ID to Drop
 
 - `ShowCourseDetails`  
-  Display details of a course.  
-  Input format:  
-  ```
-  <course_code>
-  ```
+  Display details of a course. The program will prompt for:
+  - Course ID to View Details
 
-### Example
+### Interactive Input with Helper Prompts
+
+The program guides you for every input field. When executing a command, you will be prompted for each value. For example:
+
+#### Example Session
 
 ```
-5
-add_student
-S01 Alice 2 8.2 2
-CS101 MA101
-add_course
-CS201 DataStructures 4 2 A 1
-CS101
-enroll
-S01 CS201
-ShowCourseDetails
-CS201
-drop
-S01 CS201
+Enter the number of queries to be made: 5
+
+Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): addStudent
+Enter Student ID: S01
+Enter Student Name: Alice
+Enter Year of Study: 2
+Enter CGPA: 8.2
+Enter Number of Completed Courses: 2
+Enter Course 1: CS101
+Enter Course 2: MA101
+Student S01 has been added!
+
+Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): addCourse
+Enter Course ID: CS201
+Enter Course Name: DataStructures
+Enter Number of Credits: 4
+Enter Course Capacity: 2
+Enter Time Slot (A/B/C/etc.): A
+Enter Number of Prerequisite Courses: 1
+Enter Prerequisite Course 1: CS101
+Course CS201 has been added!
+
+Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): enroll
+Enter Student ID for Enrollment: S01
+Enter Course ID to Enroll In: CS201
+Student S01 has been enrolled!
+
+Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): ShowCourseDetails
+Enter Course ID to View Details: CS201
+Course Code : CS201
+Course Name : DataStructures
+Credits : 4
+Capacity : 2 students
+Time Slot : A
+Prerequisites : CS101 
+
+Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): drop
+Enter Student ID for Dropping Course: S01
+Enter Course ID to Drop: CS201
+Course has been dropped!
+
+Registration completed!
 ```
 
 ## How It Works
@@ -87,6 +114,7 @@ S01 CS201
 - All data is stored in memory using C++ STL containers (map, set, queue, vector).
 - Constraints like prerequisites, time slot clashes, and credit limits are enforced during enrollment.
 - Waitlisted students are automatically enrolled if space becomes available.
+- Input is user-friendly: the program provides helper lines for each prompt.
 
 ## Requirements
 
