@@ -65,6 +65,7 @@ public:
         enrolled_students.push_back(s.student_id); 
         s.completed_credits += credits;
         s.enrolled_courses.insert(course_code);
+        cout << "Student " << s.student_id <<" has been enrolled!" << endl;
     }
     void drop(student& s, unordered_map<string, student>& std_mp, unordered_map<string, course>& course_mp) {
         if (s.enrolled_courses.find(course_code) == s.enrolled_courses.end()) {
@@ -94,6 +95,7 @@ public:
                 enrolled_students.push_back(next_student.student_id);
                 next_student.completed_credits += credits;
                 next_student.enrolled_courses.insert(course_code);
+                cout << "Student " << next_student.student_id <<" has been enrolled!" << endl;
                 break; 
             }
         }
@@ -107,6 +109,8 @@ public:
         cout << "Prerequisites : ";
         for (const auto& pre : prerequisites)
             cout << pre << " ";
+        if (prerequisites.empty())
+            cout << "None!";
         cout << endl;
     }
     friend class student;
@@ -119,35 +123,71 @@ public:
         string id, name;
         int year, n;
         float cgpa;
-        cin >> id >> name >> year >> cgpa >> n;
+
+        cout << "Enter Student ID: ";
+        cin >> id;
+        cout << "Enter Student Name: ";
+        cin >> name;
+        cout << "Enter Year of Study: ";
+        cin >> year;
+        cout << "Enter CGPA: ";
+        cin >> cgpa;
+        cout << "Enter Number of Completed Courses: ";
+        cin >> n;
+
         vector<string> courses(n);
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < n; j++) {
+            cout << "Enter Course " << j + 1 << ": ";
             cin >> courses[j];
+        }
+
         std_mp[id] = student(id, name, year, cgpa, courses);
         cout << "Student " << id << " has been added!" << endl;
     }
+
     void addCourse() {
         string id, name;
         int credits, capacity, n;
         char slot;
-        cin >> id >> name >> credits >> capacity >> slot >> n;
+    
+        cout << "Enter Course ID: ";
+        cin >> id;
+        cout << "Enter Course Name: ";
+        cin >> name;
+        cout << "Enter Number of Credits: ";
+        cin >> credits;
+        cout << "Enter Course Capacity: ";
+        cin >> capacity;
+        cout << "Enter Time Slot (A/B/C/etc.): ";
+        cin >> slot;
+        cout << "Enter Number of Prerequisite Courses: ";
+        cin >> n;
+
         vector<string> prereq(n);
         bool valid = true;
         for (int j = 0; j < n; j++) {
+            cout << "Enter Prerequisite Course " << j + 1 << ": ";
             cin >> prereq[j];
             if (course_mp.find(prereq[j]) == course_mp.end()) {
                 valid = false;
                 cout << "Prerequisite course " << prereq[j] << " doesn't exist!" << endl; 
             }
         }
+
         if (valid) {
             course_mp[id] = course(id, name, credits, capacity, slot, prereq);
             cout << "Course " << id << " has been added!" << endl;
         }
     }
+
     void enroll() {
         string student_id, course_id;
-        cin >> student_id >> course_id;
+    
+        cout << "Enter Student ID for Enrollment: ";
+        cin >> student_id;
+        cout << "Enter Course ID to Enroll In: ";
+        cin >> course_id;
+
         if (std_mp.find(student_id) == std_mp.end() || course_mp.find(course_id) == course_mp.end())
             cout << "Invalid ID!" << endl;
         else if (std_mp[student_id].findcourse(course_id))
@@ -155,33 +195,47 @@ public:
         else
             course_mp[course_id].enroll(std_mp[student_id], course_mp);
     }
+
     void drop() {
         string student_id, course_id;
-        cin >> student_id >> course_id;
+    
+        cout << "Enter Student ID for Dropping Course: ";
+        cin >> student_id;
+        cout << "Enter Course ID to Drop: ";
+        cin >> course_id;
+
         if (std_mp.find(student_id) != std_mp.end() && course_mp.find(course_id) != course_mp.end())
             course_mp[course_id].drop(std_mp[student_id], std_mp, course_mp);
         else
             cout << "Invalid ID!" << endl;
     }
+
     void printCourseDetails() {
         string course_id;
+    
+        cout << "Enter Course ID to View Details: ";
         cin >> course_id;
+
         if (course_mp.find(course_id) == course_mp.end())
             cout << "Invalid Course!" << endl;
         else
             course_mp[course_id].printcourses();
     }
 };
+
 int main() {
     Administration administration;
     string command;
     int queries;
+    cout << "Enter the number of queries to be made: ";
     cin >> queries;
+    cout << endl;
     while (queries--) {
+        cout << "Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): ";
         cin >> command;
-        if (command == "add_student")
+        if (command == "addStudent")
             administration.addStudent();
-        else if (command == "add_course")
+        else if (command == "addCourse")
             administration.addCourse();
         else if (command == "enroll")
             administration.enroll();
@@ -189,5 +243,7 @@ int main() {
             administration.drop();
         else if (command == "ShowCourseDetails")
             administration.printCourseDetails();
+        cout << endl;
     }
+    cout << "Registration completed!" << endl;
 }
