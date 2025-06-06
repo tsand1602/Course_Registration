@@ -124,11 +124,11 @@ Registration completed!
 ## Compilation
 
 ```bash
-g++ -std=c++11 Course_registration.cpp -o course_registration
+g++ -static-libstdc++ -static-libgcc -o course_registration.exe course_registration.cpp
 ```
 
 ## Running
 
 ```bash
-./course_registration
+./course_registration.exe
 ```
