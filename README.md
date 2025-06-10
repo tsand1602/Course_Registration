@@ -104,7 +104,7 @@ Course CS101 has been added!
 
 Enter command #3 (add_student, add_course, enroll, drop, show_course): add_course
 Enter course code: CS201
-Enter course name: DataStructures
+Enter course name: Data Structures
 Enter number of credits: 4
 Enter course capacity: 2
 Enter course time slot: C
