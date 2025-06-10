@@ -9,6 +9,7 @@ class Student:
         self.completed_credits = completed_credits
         self.completed_courses = set(completed_courses)
         self.enrolled_courses = set()
+
     def find_course(self, course_code):
         return course_code in self.completed_courses or course_code in self.enrolled_courses
 
@@ -26,10 +27,10 @@ class Course:
 class Administration:
     def __init__(self):
         self.db = mysql.connector.connect(
-            host = "localhost",
-            user = "YOUR_MYSQL_USERNAME",
-            password = "YOUR_MYSQL_PASSWORD",  # Set your MySQL root password
-            database = "course_registration"
+            host="localhost",
+            user="YOUR_MYSQL_USERNAME",
+            password="YOUR_MYSQL_PASSWORD",  # Set your MySQL root password
+            database="course_registration"
         )
         self.cursor = self.db.cursor(buffered=True)
 
@@ -42,16 +43,26 @@ class Administration:
         completed = []
         for i in range(n):
             completed.append(input(f"Enter completed course code #{i+1}: ").strip())
-        print()  
+        print()
         try:
-            self.cursor.execute("INSERT INTO students (student_id, name, year, cgpa, completed_credits) VALUES (%s, %s, %s, %s, 0)",
-                                (id, name, year, cgpa))
+            self.cursor.execute(
+                "INSERT INTO students (student_id, name, year, cgpa, completed_credits) VALUES (%s, %s, %s, %s, 0)",
+                (id, name, year, cgpa)
+            )
             for course in completed:
-                self.cursor.execute("INSERT INTO completed_courses (student_id, course_code) VALUES (%s, %s)", (id, course))
+                try:
+                    self.cursor.execute(
+                        "INSERT INTO completed_courses (student_id, course_code) VALUES (%s, %s)", (id, course)
+                    )
+                except mysql.connector.errors.IntegrityError:
+                    pass
             self.db.commit()
             print(f"Student {id} has been added!")
-        except mysql.connector.errors.IntegrityError:
-            print("Student already registered!")
+        except mysql.connector.errors.IntegrityError as e:
+            if "Duplicate entry" in str(e) and "students.PRIMARY" in str(e):
+                print("Student already registered!")
+            else:
+                print("Integrity error:", e)
         print("-" * 40)
 
     def addCourse(self):
@@ -70,23 +81,33 @@ class Administration:
             if self.cursor.fetchone() is None:
                 print(f"Prerequisite course {p} doesn't exist!")
                 valid = False
-        print()  
+        print()
         if valid:
             try:
-                self.cursor.execute("INSERT INTO courses (course_code, course_name, credits, capacity, time_slot) VALUES (%s, %s, %s, %s, %s)",
-                                    (id, name, credits, capacity, slot))
+                self.cursor.execute(
+                    "INSERT INTO courses (course_code, course_name, credits, capacity, time_slot) VALUES (%s, %s, %s, %s, %s)",
+                    (id, name, credits, capacity, slot)
+                )
                 for p in prereq:
-                    self.cursor.execute("INSERT INTO prerequisites (course_code, prerequisite_code) VALUES (%s, %s)", (id, p))
+                    try:
+                        self.cursor.execute(
+                            "INSERT INTO prerequisites (course_code, prerequisite_code) VALUES (%s, %s)", (id, p)
+                        )
+                    except mysql.connector.errors.IntegrityError:
+                        pass
                 self.db.commit()
                 print(f"Course {id} has been added!")
-            except mysql.connector.errors.IntegrityError:
-                print("Course already registered!")
+            except mysql.connector.errors.IntegrityError as e:
+                if "Duplicate entry" in str(e) and "courses.PRIMARY" in str(e):
+                    print("Course already registered!")
+                else:
+                    print("Integrity error:", e)
         print("-" * 40)
 
     def enroll(self):
         student_id = input("Enter student ID to enroll: ").strip()
         course_id = input("Enter course code to enroll in: ").strip()
-        print()  
+        print()
         self.cursor.execute("SELECT * FROM students WHERE student_id=%s", (student_id,))
         student = self.cursor.fetchone()
         self.cursor.execute("SELECT * FROM courses WHERE course_code=%s", (course_id,))
@@ -158,7 +179,7 @@ class Administration:
     def drop(self):
         student_id = input("Enter student ID to drop from course: ").strip()
         course_id = input("Enter course code to drop: ").strip()
-        print()  
+        print()
         self.cursor.execute("SELECT * FROM enrollments WHERE student_id=%s AND course_code=%s", (student_id, course_id))
         if not self.cursor.fetchone():
             print("Course hasn't been registered!")
@@ -174,7 +195,6 @@ class Administration:
 
         self.cursor.execute("SELECT student_id FROM waitlists WHERE course_code=%s ORDER BY id", (course_id,))
         for (wait_student_id,) in self.cursor.fetchall():
-            
             self.cursor.execute("SELECT time_slot FROM courses WHERE course_code=%s", (course_id,))
             time_slot = self.cursor.fetchone()[0]
             self.cursor.execute("SELECT c.time_slot FROM enrollments e JOIN courses c ON e.course_code = c.course_code WHERE e.student_id=%s", (wait_student_id,))
@@ -183,7 +203,6 @@ class Administration:
                 if slot == time_slot:
                     has_conflict = True
                     break
-            
             self.cursor.execute("SELECT completed_credits, cgpa FROM students WHERE student_id=%s", (wait_student_id,))
             cred, gpa = self.cursor.fetchone()
             self.cursor.execute("SELECT credits FROM courses WHERE course_code=%s", (course_id,))
@@ -198,13 +217,13 @@ class Administration:
                     self.db.commit()
                     print(f"Student {wait_student_id} has been enrolled!")
                 except mysql.connector.errors.IntegrityError:
-                    pass  
+                    pass
                 break
         print("-" * 40)
 
     def printCourseDetails(self):
         cid = input("Enter course code to display details: ").strip()
-        print()  
+        print()
         self.cursor.execute("SELECT * FROM courses WHERE course_code=%s", (cid,))
         course = self.cursor.fetchone()
         if course:
