@@ -68,7 +68,7 @@ A Python console application to manage a university course registration process,
 
 Run the application:
 ```bash
-python course_registration.py
+py course_registration.py
 ```
 
 The program is interactive and will guide you through all input fields for each command.
