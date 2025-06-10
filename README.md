@@ -23,7 +23,7 @@ A Python console application to manage a university course registration process,
 
 - Python 3.7 or higher
 - MySQL Server
-- [`mysql-connector-python`](https://pypi.org/project/mysql-connector-python/)
+- MySQL Connector for Python
 
 ### Installation
 
