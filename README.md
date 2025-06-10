@@ -57,10 +57,10 @@ A Python console application to manage a university course registration process,
    - Edit `course_registration.py` to set your MySQL username and password if different from the defaults:
      ```python
      self.db = mysql.connector.connect(
-         host="localhost",
-         user="YOUR_MYSQL_USERNAME",
-         password="YOUR_MYSQL_PASSWORD",
-         database="course_registration"
+         host = "localhost",
+         user = "YOUR_MYSQL_USERNAME",
+         password = "YOUR_MYSQL_PASSWORD",
+         database = "course_registration"
      )
      ```
 
