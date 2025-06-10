@@ -1,6 +1,6 @@
-# Course Registration System
+# Course Registration System (Python + MySQL)
 
-A simple C++ console application to manage a university course registration process, including student enrollment, course management, prerequisite checking, time slot clash detection, waitlisting, and more.
+A Python console application to manage a university course registration process, including student enrollment, course management, prerequisite checking, time slot clash detection, waitlisting, and more. Data is stored persistently using a MySQL database.
 
 ## Features
 
@@ -8,127 +8,172 @@ A simple C++ console application to manage a university course registration proc
   Add students with details such as ID, name, year, CGPA, and completed courses.
 
 - **Course Management:**  
-  Add courses with course code, name, credits, capacity, prerequisites, and time slot.
+  Add courses with code, name, credits, capacity, prerequisites, and time slot.
 
 - **Enrollment:**  
   Students can enroll in courses if they meet prerequisites, available slots, and credit limits. Handles time slot clashes.
 
 - **Waitlisting:**  
-  Maintains a waitlist when a course reaches its capacity. Automatically enrolls from waitlist when spots open.
+  Maintains a waitlist when a course reaches its capacity. Automatically enrolls from the waitlist when spots open.
 
 - **Dropping Courses:**  
   Students can drop courses. Waitlisted students are considered for enrollment upon vacancy.
 
 - **Course Details:**  
-  Display details for any course, including code, name, credits, capacity, time slot, and prerequisites.
+  Display complete details for any course, including prerequisites.
+
+## Setup
+
+### Requirements
+
+- Python 3.7 or higher
+- MySQL Server
+- [`mysql-connector-python`](https://pypi.org/project/mysql-connector-python/)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/tsand1602/Course_Registration.git
+   cd Course_Registration
+   ```
+
+2. **Install Python dependencies**
+   ```bash
+   pip install mysql-connector-python
+   ```
+
+3. **Create the MySQL database and tables**
+
+   - Ensure your MySQL server is running.
+   - Use the provided `schema.sql`:
+     ```bash
+     mysql -u <username> -p < schema.sql
+     ```
+   - Replace `<username>` with your MySQL username (often `root`).  
+   - Enter your password when prompted.
+   - If MySQL is not in your PATH (especially on Windows), use the full path to `mysql.exe`:
+     ```
+     "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p < schema.sql
+     ```
+
+4. **Configure Database Connection**
+
+   - Edit `course_registration.py` to set your MySQL username and password if different from the defaults:
+     ```python
+     self.db = mysql.connector.connect(
+         host="localhost",
+         user="YOUR_MYSQL_USERNAME",
+         password="YOUR_MYSQL_PASSWORD",
+         database="course_registration"
+     )
+     ```
 
 ## Usage
 
-### Command List with Prompts
+Run the application:
+```bash
+py course_registration.py
+```
 
-- `addStudent`  
-  Add a new student. The program will prompt for:
+The program is interactive and will guide you through all input fields for each command.
+
+### Command List & Prompts
+
+- `add_student`  
+  Prompts for:
   - Student ID
   - Student Name
   - Year of Study
   - CGPA
   - Number of completed courses, then asks for each course code
 
-- `addCourse`  
-  Add a new course. The program will prompt for:
-  - Course ID
-  - Course Name
-  - Number of Credits
-  - Course Capacity
-  - Time Slot (A/B/C/etc.)
-  - Number of prerequisite courses, then asks for each prerequisite course code
+- `add_course`  
+  Prompts for:
+  - Course code
+  - Course name
+  - Number of credits
+  - Capacity
+  - Time slot (A/B/C/etc.)
+  - Number of prerequisites, then asks for each prerequisite course code
 
 - `enroll`  
-  Enroll a student in a course. The program will prompt for:
-  - Student ID for Enrollment
-  - Course ID to Enroll In
+  Prompts for:
+  - Student ID to enroll
+  - Course code to enroll in
 
 - `drop`  
-  Drop a student from a course. The program will prompt for:
-  - Student ID for Dropping Course
-  - Course ID to Drop
+  Prompts for:
+  - Student ID
+  - Course code to drop
 
-- `ShowCourseDetails`  
-  Display details of a course. The program will prompt for:
-  - Course ID to View Details
+- `show_course`  
+  Prompts for:
+  - Course code to display details
 
-### Interactive Input with Helper Prompts
-
-The program guides you for every input field. When executing a command, you will be prompted for each value. For example:
-
-#### Example Session
+### Example Session
 
 ```
-Enter the number of queries to be made: 5
+Enter number of commands to execute: 5
 
-Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): addStudent
-Enter Student ID: S01
-Enter Student Name: Alice
-Enter Year of Study: 2
-Enter CGPA: 8.2
-Enter Number of Completed Courses: 2
-Enter Course 1: CS101
-Enter Course 2: MA101
+Enter command #1 (add_student, add_course, enroll, drop, show_course): add_student
+Enter student ID: S01
+Enter student name: Alice
+Enter student year: 2
+Enter student CGPA: 8.2
+Enter number of completed courses: 2
+Enter completed course code #1: CS101
+Enter completed course code #2: MA101
+
 Student S01 has been added!
+----------------------------------------
 
-Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): addCourse
-Enter Course ID: CS201
-Enter Course Name: DataStructures
-Enter Number of Credits: 4
-Enter Course Capacity: 2
-Enter Time Slot (A/B/C/etc.): A
-Enter Number of Prerequisite Courses: 1
-Enter Prerequisite Course 1: CS101
+Enter command #2 (add_student, add_course, enroll, drop, show_course): add_course
+Enter course code: CS201
+Enter course name: DataStructures
+Enter number of credits: 4
+Enter course capacity: 2
+Enter course time slot: A
+Enter number of prerequisites: 1
+Enter prerequisite course code #1: CS101
+
 Course CS201 has been added!
+----------------------------------------
 
-Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): enroll
-Enter Student ID for Enrollment: S01
-Enter Course ID to Enroll In: CS201
+Enter command #3 (add_student, add_course, enroll, drop, show_course): enroll
+Enter student ID to enroll: S01
+Enter course code to enroll in: CS201
+
 Student S01 has been enrolled!
+----------------------------------------
 
-Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): ShowCourseDetails
-Enter Course ID to View Details: CS201
-Course Code : CS201
-Course Name : DataStructures
-Credits : 4
-Capacity : 2 students
-Time Slot : A
-Prerequisites : CS101 
+Enter command #4 (add_student, add_course, enroll, drop, show_course): show_course
+Enter course code to display details: CS201
 
-Enter the type of query to be made (addStudent, addCourse, enroll, drop, ShowCourseDetails): drop
-Enter Student ID for Dropping Course: S01
-Enter Course ID to Drop: CS201
+Course Code: CS201
+Course Name: DataStructures
+Credits: 4
+Capacity: 2
+Time Slot: A
+Prerequisites: ['CS101']
+----------------------------------------
+
+Enter command #5 (add_student, add_course, enroll, drop, show_course): drop
+Enter student ID to drop from course: S01
+Enter course code to drop: CS201
+
 Course has been dropped!
+----------------------------------------
 
-Registration completed!
+Course Registration done!!
 ```
 
-## How It Works
+## Database Schema
 
-- The program reads the number of queries, then executes each command.
-- All data is stored in memory using C++ STL containers (map, set, queue, vector).
-- Constraints like prerequisites, time slot clashes, and credit limits are enforced during enrollment.
-- Waitlisted students are automatically enrolled if space becomes available.
-- Input is user-friendly: the program provides helper lines for each prompt.
+See [`schema.sql`](schema.sql) for table definitions for students, courses, enrollments, prerequisites, completed_courses, and waitlists.
 
-## Requirements
+## Notes
 
-- C++11 or higher
-- Standard input/output (console)
-
-## Compilation
-
-```bash
-g++ -static-libstdc++ -static-libgcc -o course_registration.exe course_registration.cpp
-```
-
-## Running
-
-```bash
-./course_registration.exe
-```
+- All data is persisted in the MySQL database.
+- The program uses clear, separated console output for improved readability.
+- All constraints (prerequisites, credit limits, time slot clashes) are enforced at enrollment.
