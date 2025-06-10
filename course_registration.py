@@ -27,10 +27,10 @@ class Course:
 class Administration:
     def __init__(self):
         self.db = mysql.connector.connect(
-            host="localhost",
-            user="YOUR_MYSQL_USERNAME",
-            password="YOUR_MYSQL_PASSWORD",  # Set your MySQL root password
-            database="course_registration"
+            host = "localhost",
+            user = "YOUR_MYSQL_USERNAME",
+            password = "YOUR_MYSQL_PASSWORD",  # Set your MySQL root password
+            database = "course_registration"
         )
         self.cursor = self.db.cursor(buffered=True)
 
